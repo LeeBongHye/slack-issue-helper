@@ -27,7 +27,16 @@ interface SpinnerProps {
   
     render() {
       this.element.innerHTML = `
-        <div class="spinner-border" style="width: ${this.size}px; height: ${this.size}px; border-color: ${this.color}"></div>
+        <div class="spinner-border" 
+            style="width: ${this.size}px; 
+            height: ${this.size}px; 
+            border-color: ${this.color}"
+            border-radius: 50%;
+            border: 2px solid #ccc;
+            border-top-color: #777;
+            animation: spin 1s linear infinite;
+            >            
+        </div>
       `;
     }
   }
