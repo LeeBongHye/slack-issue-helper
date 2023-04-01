@@ -34,8 +34,7 @@ export async function subIssuePreview(body: SlackIssuePreviewMessageBody) {
   const placeholderMsg = await slackWeb.chat.postMessage({
     thread_ts: payload.message.thread_ts ?? undefined,
     channel: payload.channel.id,
-    text: '이슈 생성 내용을 만들고 있어요. 잠시만 기다려주세요'
-     
+    text: '이슈 생성 내용을 만들고 있어요. 잠시만 기다려주세요'     
   })
 
   const summaryText = payload.message.text
