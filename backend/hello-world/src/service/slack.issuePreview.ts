@@ -3,6 +3,8 @@ import {chatCompletion} from "../libs/openAi";
 import {Block, KnownBlock} from "@slack/web-api";
 import {sendMessage, SqsMessageBody} from "../libs/sqs";
 import {getChatCompletionProps} from "../libs/airtable";
+import { Spinner } from "../libs/spinner";
+
 
 export type SlackIssuePreviewMessageBody = SqsMessageBody<'issue_preview', SlackMessageAction>
 
@@ -23,17 +25,24 @@ export async function pubIssuePreview(payload: SlackMessageAction) {
 
 export async function subIssuePreview(body: SlackIssuePreviewMessageBody) {
   const payload = body.body
-
+    
+  const container = document.querySelector('#container');
+  const loadingSpinner = new Spinner(container, { size: 32, color: '#007bff' }); 
+  
+  loadingSpinner.show();
+  
   const placeholderMsg = await slackWeb.chat.postMessage({
     thread_ts: payload.message.thread_ts ?? undefined,
     channel: payload.channel.id,
     text: '이슈 생성 내용을 만들고 있어요. 잠시만 기다려주세요'
+     
   })
 
   const summaryText = payload.message.text
 
   const { request, ...props } = await getChatCompletionProps('issue_preview')
 
+ 
   const response = await chatCompletion({
     request: `${request}
     아래 형식으로만 출력
@@ -45,6 +54,8 @@ export async function subIssuePreview(body: SlackIssuePreviewMessageBody) {
   const responseMessage = response.message?.content
 
   console.log("response message => ", responseMessage)
+
+  loadingSpinner.hide();
 
   if(placeholderMsg.ts) {
     await slackWeb.chat.delete({
